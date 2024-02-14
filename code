@@ -1,0 +1,113 @@
+import os
+
+class Pelicula:
+    def __init__(self, nombre_pelicula, duracion):
+        self.nombre_pelicula = nombre_pelicula
+        self.duracion = duracion
+      
+
+class CatalogoPelicula:
+
+    def __init__(self, nombre,  ruta_archivo):
+       self.nombre = nombre
+       self.ruta_archivo = ruta_archivo
+    
+
+    def listar(self):
+
+        try:
+            f = open(self.ruta_archivo, 'r') # access mode "r" only reading
+        except FileNotFoundError:
+            return("No se han añadido peliculas aún!\n")
+        
+        else:
+            print(f.read())
+            f.close()
+
+    
+    def agregar(self, peli):
+        try:
+            f = open(self.ruta_archivo, "a")
+
+        except FileNotFoundError:
+                  return('¡El catalogo ' + self.nombre + ' no existe!\n')
+        else:
+            f.write(peli.nombre_pelicula + ',' + peli.duracion + '\n')
+            f.close()
+            return('La película se ha añadido al catálogo.\n')
+
+    
+    def eliminar(self, peli_remove):
+        
+        try: 
+           f  = open(self.ruta_archivo, 'r') 
+        except FileNotFoundError:
+            return('¡El catalogo ' + self.ruta_archivo + ' no existe!\n')
+        
+        else:
+            directory = f.readlines()
+            f.close()
+            directory = dict([tuple(line.split(',')) for line in directory])
+            if peli_remove in directory:
+                del directory[peli_remove]
+                f = open(self.ruta_archivo, 'w')
+                for minutos, tipo  in directory.items():
+                    f.write(minutos + ',' + tipo)
+                f.close()
+                return ('¡La película en el catálogo se ha borrado!\n')
+            else:
+                return('¡La película en el catálogo ' + ' no existe!\n')
+
+    def crear_catalogo(self):
+
+        answer = "N"
+
+        if os.path.isfile(self.ruta_archivo):
+            print("No se ha creado el catalogo, porque ya existe") 
+        
+        else:
+            
+           f = open(self.ruta_archivo, 'w')
+           f.close()
+           print("Se ha creado el catalogo.\n")
+    
+    
+    
+
+def menu():
+    print('Manejo del Catálogo de Peliculas')
+    print('**=========================**')
+    print('1 - Listar las peliculas añadidas al catálogo')
+    print('2 - Añadir una película')
+    print('3 - Eliminar una película')
+    print('4 - Crear el Catálogo de Peliculas')
+    print('0 - Terminar')
+    option = input('Introduzca el número de la opción deseada: ')        
+    return option
+
+
+def manejo_catalogo():
+
+    d =  CatalogoPelicula("catalogo", "catalogo.txt")
+
+    while True:
+        option = menu()
+        if option == '1':
+            print(d.listar())
+        
+        elif option == '2':
+            name = input('Introduce el nombre de la película: ')
+            minutos = input('Introduce la duración de la película: ')
+            Pelicula1 = Pelicula(name, minutos)
+            print(d.agregar(Pelicula1))
+
+        elif option == '3':
+            name = input('Introduce el nombre de la película: ')
+            print(d.eliminar(name))
+        elif option == '4':
+            print(d.crear_catalogo())
+        else:
+            break
+    return
+
+manejo_catalogo()
